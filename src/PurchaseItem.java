@@ -24,10 +24,11 @@ import javax.swing.SpinnerNumberModel;
 public class PurchaseItem extends JFrame implements ActionListener {
 
 	private static JTextField stockNo;
+	private static JTextField errorMsg;
 	private static JSpinner amount;
-	private JLabel errorLabel;
-	private static String errorMsg = "";
-	private JTextField totalPrice;
+	private static JTextField totalPrice;
+	
+
 	private JButton checkOutBtn;
 	private TextArea basket;
 	DecimalFormat pounds = new DecimalFormat("£#,##0.00");
@@ -49,10 +50,12 @@ public class PurchaseItem extends JFrame implements ActionListener {
 		/** ENTER CODE FIELD AND LABEL AND ERROR LABEL */
 		JPanel panel1 = new JPanel();
 		panel1.add(new JLabel("Enter code: "));
-		panel1.add(new JLabel(getErrorMsg()));
 		setStockNo(new JTextField(3));
 		panel1.add(getStockNo());
+		setErrorMsg(new JTextField(20));
+		panel1.add(getErrorMsg());
 		getStockNo().setEditable(false);
+		getErrorMsg().setEditable(false);
 		c.gridx = 0;
 		c.gridy = 0;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
@@ -99,9 +102,9 @@ public class PurchaseItem extends JFrame implements ActionListener {
 		/** TOTAL PRICE FIELD */
 		JPanel panel6 = new JPanel();
 		panel6.add(new JLabel("Total price: "));
-		totalPrice = new JTextField(10);
-		panel6.add(totalPrice);
-		totalPrice.setEditable(false);
+		setTotalPrice(new JTextField(10));
+		panel6.add(getTotalPrice());
+		getTotalPrice().setEditable(false);
 		c.gridx = 0;
 		c.gridy = 2;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
@@ -123,6 +126,8 @@ public class PurchaseItem extends JFrame implements ActionListener {
 		pack();
 		setVisible(true);
 	}
+
+	
 
 	public void actionPerformed(ActionEvent e) {
 
@@ -169,13 +174,20 @@ public class PurchaseItem extends JFrame implements ActionListener {
 	public static void setAmount(JSpinner amount) {
 		PurchaseItem.amount = amount;
 	}
-	
-	public static void setErrorMsg(String errorMsg) {
-		PurchaseItem.errorMsg = errorMsg;
+	public static JTextField getErrorMsg() {
+		return errorMsg;
 	}
 
-	public static String getErrorMsg() {
-		return errorMsg;
+	public static void setErrorMsg(JTextField errorMsg) {
+		PurchaseItem.errorMsg = errorMsg;
+	}
+	
+	public static JTextField getTotalPrice() {
+		return totalPrice;
+	}
+
+	public static void setTotalPrice(JTextField totalPrice) {
+		PurchaseItem.totalPrice = totalPrice;
 	}
 
 }

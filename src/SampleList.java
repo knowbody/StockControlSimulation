@@ -6,14 +6,16 @@ import java.text.DecimalFormat;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 public class SampleList extends JPanel {
 
 	private int identifier;
-	private JList list;
-	private DefaultListModel listModel;
+	private JList<String> list;
+	private DefaultListModel<String> listModel;
 	private JButton addButton;
 	private JButton delButton;
 	private JScrollPane listPane;
@@ -29,12 +31,12 @@ public class SampleList extends JPanel {
 		listModel = new DefaultListModel<String>();
 		for (int i = 0; i < entries.length; i++)
 			listModel.addElement(entries[i]);
-		list = new JList(listModel);
+		list = new JList<String>(listModel);
 		list.setVisibleRowCount(5);
 
 		listPane = new JScrollPane(list);
 		listPanel = new JPanel();
-		listPane.setPreferredSize(new java.awt.Dimension(400, 250));
+		listPane.setPreferredSize(new java.awt.Dimension(500, 200));
 		listPanel.add(listPane);
 		add(listPanel);
 		addButton = new JButton("ADD ITEM");
@@ -65,25 +67,32 @@ public class SampleList extends JPanel {
 				break;
 			case 2:
 				if (name == null) {
-					PurchaseItem.setErrorMsg("Enter correct code");
+					PurchaseItem.getErrorMsg().setText("Enter correct code");
 				} else if (amountInt == 0) {
-					PurchaseItem.setErrorMsg("Please enter correct amount.");
+					PurchaseItem.getErrorMsg().setText(
+							"Please enter correct amount.");
 				} else if (quantity < amountInt) {
-					PurchaseItem.setErrorMsg("Only " + quantity
-							+ " item(s) available.");
+					PurchaseItem.getErrorMsg().setText(
+							"Only " + quantity + " item(s) available.");
 				} else {
+					PurchaseItem.getAmount().setValue(0);
+					PurchaseItem.getStockNo().setText("");
+					PurchaseItem.getErrorMsg().setText("");
 					int index = listModel.getSize();
+					
 					listModel
 							.addElement(amountStr
 									+ " x "
 									+ name
-									+ "\t\t("
+									+ "   ("
 									+ amountStr
 									+ " x "
 									+ pounds.format(StockData.getPrice(key))
 									+ " = "
 									+ pounds.format(StockData.getPrice(key)
-											* amountInt) + ")");
+											* amountInt) + ")" + "     code: "
+									+ key);
+					
 					getRootPane().invalidate();
 					getRootPane().validate();
 					list.setSelectedIndex(index);
