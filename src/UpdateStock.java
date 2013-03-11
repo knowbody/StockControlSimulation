@@ -60,28 +60,28 @@ public class UpdateStock extends JFrame implements ActionListener {
 		setVisible(true);
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		String key = getStockNo().getText();
-		int quantity = StockData.getQuantity(key);
-		String name = StockData.getName(key);
-		String amountStr = amount.getValue().toString();
-		int amountInt = Integer.parseInt(amountStr);
-
-		// total amount of product in the stock
-		int amountInStock = amountInt + quantity;
-
-		if (name == null && amountInt <= 0) {
-			stock.setText("No such item in stock.");
-		} else if (name != null && amountInt <= 0) {
-			stock.setText("Please enter correct quantity.");
-		} else {
-			StockData.update(key, amountInt);
-			stock.setText("Stock has been updated.");
-			stock.append("\n" + amountInt + " items added.");
-			stock.append("\nThere is " + amountInStock + " " + name
-					+ " in the stock.");
-		}
-	}
+//	public void actionPerformed(ActionEvent e) {
+//		String key = getStockNo().getText();
+//		int quantity = StockData.getQuantity(key);
+//		String name = StockData.getName(key);
+//		String amountStr = amount.getValue().toString();
+//		int amountInt = Integer.parseInt(amountStr);
+//
+//		// total amount of product in the stock
+//		int amountInStock = amountInt + quantity;
+//
+//		if (name == null && amountInt <= 0) {
+//			stock.setText("No such item in stock.");
+//		} else if (name != null && amountInt <= 0) {
+//			stock.setText("Please enter correct quantity.");
+//		} else {
+//			StockData.update(key, amountInt);
+//			stock.setText("Stock has been updated.");
+//			stock.append("\n" + amountInt + " items added.");
+//			stock.append("\nThere is " + amountInStock + " " + name
+//					+ " in the stock.");
+//		}
+//	}
 
 	public static JTextField getStockNo() {
 		return stockNo;
@@ -89,6 +89,12 @@ public class UpdateStock extends JFrame implements ActionListener {
 
 	public static void setStockNo(JTextField stockNo) {
 		UpdateStock.stockNo = stockNo;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

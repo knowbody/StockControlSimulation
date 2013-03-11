@@ -34,6 +34,7 @@ public class PurchaseItem extends JFrame implements ActionListener {
 	DecimalFormat pounds = new DecimalFormat("£#,##0.00");
 
 	public PurchaseItem() {
+		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		JPanel totalGUI = new JPanel();
@@ -94,7 +95,7 @@ public class PurchaseItem extends JFrame implements ActionListener {
 
 		/** BASKET AREA - ADD and DELETE BUTTONS + SHOPPING LIST */
 		JPanel panel5 = new JPanel();
-		panel5.add(new SampleList(2));
+		panel5.add(new PurchaseBasket());
 		c.gridx = 0;
 		c.gridy = 1;
 		panel5and6.add(panel5, c);
@@ -133,31 +134,31 @@ public class PurchaseItem extends JFrame implements ActionListener {
 
 	}
 
-	public void addToBasketUtil() {
-		String key = getStockNo().getText();
-		int quantity = StockData.getQuantity(key);
-		String name = StockData.getName(key);
-		String amountStr = amount.getValue().toString();
-		int amountInt = Integer.parseInt(amountStr);
-
-		if (name == null) {
-			basket.setText("Enter correct code");
-		} else if (amountInt == 0) {
-			basket.setText("Please enter correct amount.");
-		} else if (quantity < amountInt) {
-			basket.setText("Only " + quantity + " item(s) available.");
-		} else {
-			StockData.update(key, -amountInt);
-			basket.setText(amountStr + " x " + name);
-			basket.append("\t\t(" + amountStr + " x "
-					+ pounds.format(StockData.getPrice(key)));
-			basket.append(" = "
-					+ pounds.format(StockData.getPrice(key) * amountInt) + ")");
-			totalPrice.setText(pounds.format(StockData.getPrice(key)
-					* amountInt));
-
-		}
-	}
+//	public void addToBasketUtil() {
+//		String key = getStockNo().getText();
+//		int quantity = StockData.getQuantity(key);
+//		String name = StockData.getName(key);
+//		String amountStr = amount.getValue().toString();
+//		int amountInt = Integer.parseInt(amountStr);
+//
+//		if (name == null) {
+//			basket.setText("Enter correct code");
+//		} else if (amountInt == 0) {
+//			basket.setText("Please enter correct amount.");
+//		} else if (quantity < amountInt) {
+//			basket.setText("Only " + quantity + " item(s) available.");
+//		} else {
+//			StockData.update(key, -amountInt);
+//			basket.setText(amountStr + " x " + name);
+//			basket.append("\t\t(" + amountStr + " x "
+//					+ pounds.format(StockData.getPrice(key)));
+//			basket.append(" = "
+//					+ pounds.format(StockData.getPrice(key) * amountInt) + ")");
+//			totalPrice.setText(pounds.format(StockData.getPrice(key)
+//					* amountInt));
+//
+//		}
+//	}
 
 	public static JTextField getStockNo() {
 		return stockNo;

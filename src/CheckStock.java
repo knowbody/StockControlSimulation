@@ -50,20 +50,20 @@ public class CheckStock extends JFrame implements ActionListener {
 	// and also takes the name of the product from StockData class
 	// to output information about the product: name, price, stock no.
 	// or if it exists at all
-	public void actionPerformed(ActionEvent e) {
-		String key = getStockNo().getText();
-		String name = StockData.getName(key);
-
-		if (name == null) {
-			information.setText("No such item in stock");
-		} else {
-			information.setText(name);
-			information.append("\nPrice: "
-					+ pounds.format(StockData.getPrice(key)));
-			information.append("\nAmount in stock: "
-					+ StockData.getQuantity(key));
-		}
-	}
+//	public void actionPerformed(ActionEvent e) {
+//		String key = getStockNo().getText();
+//		String name = StockData.getName(key);
+//
+//		if (name == null) {
+//			information.setText("No such item in stock");
+//		} else {
+//			information.setText(name);
+//			information.append("\nPrice: "
+//					+ pounds.format(StockData.getPrice(key)));
+//			information.append("\nAmount in stock: "
+//					+ StockData.getQuantity(key));
+//		}
+//	}
 
 	public static JTextField getStockNo() {
 		return stockNo;
@@ -71,5 +71,11 @@ public class CheckStock extends JFrame implements ActionListener {
 
 	public void setStockNo(JTextField stockNo) {
 		this.stockNo = stockNo;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
