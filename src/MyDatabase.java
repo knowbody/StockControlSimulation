@@ -26,16 +26,21 @@ public class MyDatabase {
 			Connection con = DriverManager.getConnection("jdbc:odbc:db1");
 			Statement st = con.createStatement();
 			String productCode = PurchaseItem.getStockNo().getText();
-			ResultSet rs = st.executeQuery("select * from Table1 where Key="
-					+ productCode);
+			if (productCode.equals("")) {
+				// do not look for the record in the database
+			} else { // look for the product name
+				ResultSet rs = st
+						.executeQuery("select * from Table1 where Key="
+								+ productCode);
 
-			while (rs.next()) {
-				switch (searchData) {
-				case 1:
-					name = rs.getString("ItemName");
-					price = rs.getString("ItemPrice");
-					quantity = rs.getString("ItemQuantity");
-					break;
+				while (rs.next()) {
+					switch (searchData) {
+					case 1:
+						name = rs.getString("ItemName");
+						price = rs.getString("ItemPrice");
+						quantity = rs.getString("ItemQuantity");
+						break;
+					}
 				}
 			}
 			con.close();
