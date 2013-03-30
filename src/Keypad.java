@@ -1,7 +1,6 @@
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -34,15 +33,16 @@ public class Keypad extends JPanel implements ActionListener {
 		buttonR.addActionListener(this);
 		setVisible(true);
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		switch (identifier) {
 		// case 1 - answer from keypad in CheckStock
 		case 1:
 			String c = CheckStock.getStockNo().getText();
+			// reset makes JTextField and JTextArea empty
 			if (e.getActionCommand().equalsIgnoreCase("Reset")) {
-				CheckStock.getStockNo().setText(""); // reset makes JTextField
-														// empty
+				CheckStock.getStockNo().setText("");
+				CheckStock.getInformation().setText("");
 			} else if (e.getActionCommand().equalsIgnoreCase("Undo")) {
 				CheckStock.getStockNo().setText(
 						c = c.substring(0, c.length() - 1));
@@ -72,9 +72,9 @@ public class Keypad extends JPanel implements ActionListener {
 		// case 3 - answer from keypad in UpdateStock
 		case 3:
 			String u = UpdateStock.getStockNo().getText();
+			// reset makes JTextField empty
 			if (e.getActionCommand().equalsIgnoreCase("Reset")) {
-				UpdateStock.getStockNo().setText(""); // reset makes JTextField
-														// empty
+				UpdateStock.getStockNo().setText("");
 			} else if (e.getActionCommand().equalsIgnoreCase("Undo")) {
 				// undo deletes last character
 				UpdateStock.getStockNo().setText(
@@ -85,7 +85,21 @@ public class Keypad extends JPanel implements ActionListener {
 			}
 			break;
 
+		// case 4 - answer from keypad in PasswordCheck
+		case 4:
+			char[] pass = PasswordCheck.getPass().getPassword();
+			String passStr = String.valueOf(pass);
+			if (e.getActionCommand().equalsIgnoreCase("Reset")) {
+				PasswordCheck.getPass().setText("");
+			} else if (e.getActionCommand().equalsIgnoreCase("Undo")) {
+				// undo deletes last character
+				PasswordCheck.getPass().setText(
+						passStr = passStr.substring(0, passStr.length() - 1));
+			} else {
+				// append next number to the previous one
+				PasswordCheck.getPass().setText(passStr + e.getActionCommand());
+			}
+			break;
 		}
 	}
-	
 }

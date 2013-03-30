@@ -5,14 +5,19 @@
  */
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
@@ -20,81 +25,129 @@ import javax.swing.SpinnerNumberModel;
 public class UpdateStock extends JFrame implements ActionListener {
 
 	private static JTextField stockNo;
-
-	// private JTextField amount;
-	private JSpinner amount;
-	private JButton update;
-	private TextArea stock;
-	DecimalFormat pounds = new DecimalFormat("£#,##0.00");
+	private static JTextField errorMsg;
+	private static JSpinner amount;
+	private static JTextField totalPrice;
+	private JButton updateBtn;
 
 	public UpdateStock() {
-		setLayout(new FlowLayout());
-		setBounds(100, 100, 340, 360);
-		setTitle("Update Stock");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setTitle("Update Stock");
+		JPanel totalGUI = new JPanel();
 
-		add(new JLabel("Enter Stock Number:"));
-		setStockNo(new JTextField(7));
-		add(getStockNo());
+		// JPanel with the GridBagLayout.
+		// I also create a GridBagConstraints Object
+		JPanel mainPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+
+		// For each item I create to add to the mainPanel
+		// I set constraints.
+		// This one is cell (0,0)
+		/** ENTER CODE FIELD AND LABEL AND ERROR FIELD */
+		JPanel panel1 = new JPanel();
+		panel1.add(new JLabel("Enter code: "));
+		setStockNo(new JTextField(3));
+		panel1.add(getStockNo());
+		setErrorMsg(new JTextField(20));
+		panel1.add(getErrorMsg());
 		getStockNo().setEditable(false);
+		getErrorMsg().setEditable(false);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
+		c.insets = new Insets(0, 0, 0, 50);
+		mainPanel.add(panel1, c);
 
-		add(new JLabel("Enter quantity of product:"));
-		amount = new JSpinner();
-		amount.setEditor(new JSpinner.DefaultEditor(amount));
-		Dimension prefSize = amount.getPreferredSize();
+		/** ENTER AMOUNT SPINNER AND LABEL */
+		JPanel panel2 = new JPanel();
+		panel2.add(new JLabel("Enter amount: "));
+		setAmount(new JSpinner());
+		getAmount().setEditor(new JSpinner.DefaultEditor(getAmount()));
+		Dimension prefSize = getAmount().getPreferredSize();
 		prefSize = new Dimension(45, prefSize.height);
-		amount.setPreferredSize(prefSize);
-		amount.setModel(new SpinnerNumberModel(0, 0, 100, 1));
-		add(amount);
+		getAmount().setPreferredSize(prefSize);
+		getAmount().setModel(new SpinnerNumberModel(0, 0, 999, 1));
+		panel2.add(getAmount());
+		c.gridx = 0;
+		c.gridy = 1;
+		mainPanel.add(panel2, c);
 
-		update = new JButton("Update");
-		add(update);
-		update.addActionListener(this);
+		/** KEYPAD */
+		JPanel panel4 = new JPanel();
+		panel4.add(new Keypad(3));
+		c.gridx = 1;
+		c.gridy = 3;
+		mainPanel.add(panel4, c);
 
-		stock = new TextArea(2, 40);
-		add(stock);
-		stock.setEditable(false);
+		/** BORDER AROUND ITEMS TO UPDATE AND TOTAL PRICE */
+		JPanel panel5and6 = new JPanel(new GridBagLayout());
+		c.gridx = 0;
+		c.gridy = 3;
+		panel5and6.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createTitledBorder("ITEMS TO UPDATE"),
+				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+		mainPanel.add(panel5and6, c);
 
-		add(new Keypad(3));
-		setResizable(false);
+		/** ITEMS TO UPDATE AREA - ADD and DELETE BUTTONS + ITEM LIST */
+		JPanel panel5 = new JPanel();
+		panel5.add(new StockBasket());
+		c.gridx = 0;
+		c.gridy = 1;
+		panel5and6.add(panel5, c);
+
+		/** UPDATE STOCK BUTTON */
+		JPanel panel7 = new JPanel();
+		updateBtn = new JButton("UPDATE STOCK");
+		panel7.add(updateBtn);
+		c.gridx = 0;
+		c.gridy = 4;
+		c.anchor = GridBagConstraints.CENTER;
+		mainPanel.add(panel7, c);
+
+		totalGUI.add(mainPanel);
+
+		setContentPane(totalGUI);
+		pack();
 		setVisible(true);
 	}
-
-//	public void actionPerformed(ActionEvent e) {
-//		String key = getStockNo().getText();
-//		int quantity = StockData.getQuantity(key);
-//		String name = StockData.getName(key);
-//		String amountStr = amount.getValue().toString();
-//		int amountInt = Integer.parseInt(amountStr);
-//
-//		// total amount of product in the stock
-//		int amountInStock = amountInt + quantity;
-//
-//		if (name == null && amountInt <= 0) {
-//			stock.setText("No such item in stock.");
-//		} else if (name != null && amountInt <= 0) {
-//			stock.setText("Please enter correct quantity.");
-//		} else {
-//			StockData.update(key, amountInt);
-//			stock.setText("Stock has been updated.");
-//			stock.append("\n" + amountInt + " items added.");
-//			stock.append("\nThere is " + amountInStock + " " + name
-//					+ " in the stock.");
-//		}
-//	}
-
-	public static JTextField getStockNo() {
-		return stockNo;
-	}
-
-	public static void setStockNo(JTextField stockNo) {
-		UpdateStock.stockNo = stockNo;
-	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	
+	public static JTextField getStockNo() {
+		return stockNo;
+	}
+
+	public void setStockNo(JTextField stockNo) {
+		UpdateStock.stockNo = stockNo;
+	}
+
+	public static JSpinner getAmount() {
+		return amount;
+	}
+
+	public static void setAmount(JSpinner amount) {
+		UpdateStock.amount = amount;
+	}
+
+	public static JTextField getErrorMsg() {
+		return errorMsg;
+	}
+
+	public static void setErrorMsg(JTextField errorMsg) {
+		UpdateStock.errorMsg = errorMsg;
+	}
+
+	public static JTextField getTotalPrice() {
+		return totalPrice;
+	}
+
+	public static void setTotalPrice(JTextField totalPrice) {
+		UpdateStock.totalPrice = totalPrice;
+	}
+	
 }

@@ -4,6 +4,9 @@
  *
  */
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,58 +15,76 @@ import java.text.DecimalFormat;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class CheckStock extends JFrame implements ActionListener {
 
 	private static JTextField stockNo;
-	private TextArea information;
+	private static JTextArea information;
 	private JButton check;
 	DecimalFormat pounds = new DecimalFormat("£#,##0.00");
 
 	public CheckStock() {
-		setLayout(new FlowLayout());
-		setBounds(100, 100, 280, 360);
-		setTitle("Check Stock");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setTitle("Check Stock");
 
-		add(new JLabel("Enter Stock Number:"));
+		JPanel totalGUI = new JPanel();
+		JPanel mainPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+
+		JPanel panel1 = new JPanel();
+		panel1.add(new JLabel("Enter Stock Number:"));
 		setStockNo(new JTextField(3));
-		add(getStockNo());
+		panel1.add(getStockNo());
 		getStockNo().setEditable(false);
-
 		check = new JButton("Check");
-		add(check);
 		check.addActionListener(this);
+		panel1.add(check);
+		c.gridy = 0;
+		c.anchor = GridBagConstraints.CENTER;
+		mainPanel.add(panel1, c);
 
-		information = new TextArea(2, 35);
-		add(information);
-		information.setEditable(false);
+		JPanel panel2 = new JPanel();
+		setInformation(new JTextArea(3, 19));
+		getInformation().setEditable(false);
+		panel2.add(getInformation());
+		c.gridy = 1;
+		c.anchor = GridBagConstraints.CENTER;
+		mainPanel.add(panel2, c);
 
-		add(new Keypad(1));
+		JPanel panel3 = new JPanel();
+		panel3.add(new Keypad(1));
+		c.gridy = 2;
+		mainPanel.add(panel3, c);
 
-		setResizable(true);
+		totalGUI.add(mainPanel);
+
+		setLocationRelativeTo(null);
+		setContentPane(totalGUI);
+		pack();
 		setVisible(true);
 	}
 
 	// takes whatever user input in stock number field
-	// and also takes the name of the product from StockData class
+	// and also takes the name of the product from MS Access database
 	// to output information about the product: name, price, stock no.
 	// or if it exists at all
-//	public void actionPerformed(ActionEvent e) {
-//		String key = getStockNo().getText();
-//		String name = StockData.getName(key);
-//
-//		if (name == null) {
-//			information.setText("No such item in stock");
-//		} else {
-//			information.setText(name);
-//			information.append("\nPrice: "
-//					+ pounds.format(StockData.getPrice(key)));
-//			information.append("\nAmount in stock: "
-//					+ StockData.getQuantity(key));
-//		}
-//	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String key = getStockNo().getText();
+		String name = (new MyDatabase(1).getName());
+		if (name == null) {
+			information.setText("No such item in stock");
+		} else {
+			information.setText(name);
+			information.append("\nPrice: £" + (new MyDatabase(1).getPrice()));
+			information.append("\nAmount in stock: "
+					+ (new MyDatabase(1).getQuantity()));
+		}
+	}
 
 	public static JTextField getStockNo() {
 		return stockNo;
@@ -72,10 +93,12 @@ public class CheckStock extends JFrame implements ActionListener {
 	public void setStockNo(JTextField stockNo) {
 		this.stockNo = stockNo;
 	}
+	
+	public static JTextArea getInformation() {
+		return information;
+	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+	public static void setInformation(JTextArea information) {
+		CheckStock.information = information;
 	}
 }

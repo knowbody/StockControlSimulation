@@ -27,28 +27,22 @@ public class PurchaseItem extends JFrame implements ActionListener {
 	private static JTextField errorMsg;
 	private static JSpinner amount;
 	private static JTextField totalPrice;
-	
-
 	private JButton checkOutBtn;
-	private TextArea basket;
-	DecimalFormat pounds = new DecimalFormat("£#,##0.00");
 
 	public PurchaseItem() {
-		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
+		setTitle("Purchase Item");
 		JPanel totalGUI = new JPanel();
 
 		// JPanel with the GridBagLayout.
-		// I also create a GridBagConstraints Object.
-
+		// I also create a GridBagConstraints Object
 		JPanel mainPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 
 		// For each item I create to add to the mainPanel
 		// I set constraints.
 		// This one is cell (0,0)
-		/** ENTER CODE FIELD AND LABEL AND ERROR LABEL */
+		/** ENTER CODE FIELD AND LABEL AND ERROR FIELD */
 		JPanel panel1 = new JPanel();
 		panel1.add(new JLabel("Enter code: "));
 		setStockNo(new JTextField(3));
@@ -128,44 +122,15 @@ public class PurchaseItem extends JFrame implements ActionListener {
 		setVisible(true);
 	}
 
-	
-
 	public void actionPerformed(ActionEvent e) {
 
 	}
-
-//	public void addToBasketUtil() {
-//		String key = getStockNo().getText();
-//		int quantity = StockData.getQuantity(key);
-//		String name = StockData.getName(key);
-//		String amountStr = amount.getValue().toString();
-//		int amountInt = Integer.parseInt(amountStr);
-//
-//		if (name == null) {
-//			basket.setText("Enter correct code");
-//		} else if (amountInt == 0) {
-//			basket.setText("Please enter correct amount.");
-//		} else if (quantity < amountInt) {
-//			basket.setText("Only " + quantity + " item(s) available.");
-//		} else {
-//			StockData.update(key, -amountInt);
-//			basket.setText(amountStr + " x " + name);
-//			basket.append("\t\t(" + amountStr + " x "
-//					+ pounds.format(StockData.getPrice(key)));
-//			basket.append(" = "
-//					+ pounds.format(StockData.getPrice(key) * amountInt) + ")");
-//			totalPrice.setText(pounds.format(StockData.getPrice(key)
-//					* amountInt));
-//
-//		}
-//	}
-
 	public static JTextField getStockNo() {
 		return stockNo;
 	}
 
 	public void setStockNo(JTextField stockNo) {
-		this.stockNo = stockNo;
+		PurchaseItem.stockNo = stockNo;
 	}
 
 	public static JSpinner getAmount() {
@@ -175,6 +140,7 @@ public class PurchaseItem extends JFrame implements ActionListener {
 	public static void setAmount(JSpinner amount) {
 		PurchaseItem.amount = amount;
 	}
+
 	public static JTextField getErrorMsg() {
 		return errorMsg;
 	}
@@ -182,7 +148,7 @@ public class PurchaseItem extends JFrame implements ActionListener {
 	public static void setErrorMsg(JTextField errorMsg) {
 		PurchaseItem.errorMsg = errorMsg;
 	}
-	
+
 	public static JTextField getTotalPrice() {
 		return totalPrice;
 	}
@@ -190,5 +156,4 @@ public class PurchaseItem extends JFrame implements ActionListener {
 	public static void setTotalPrice(JTextField totalPrice) {
 		PurchaseItem.totalPrice = totalPrice;
 	}
-
 }

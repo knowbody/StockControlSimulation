@@ -82,8 +82,8 @@ public class StockUtil extends JPanel implements ActionListener, TableModelListe
 	public Vector createNewElement() {
 		Vector t = new Vector();
 		t.addElement(PurchaseItem.getAmount().getValue());
-		t.addElement(new MyDatabase(1).getName());
-		t.addElement(new MyDatabase(1).getPrice());
+		t.addElement(new MyDatabase(2).getName());
+		t.addElement(new MyDatabase(2).getPrice());
 		return t;
 	}
 

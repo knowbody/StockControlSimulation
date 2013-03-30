@@ -9,7 +9,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class PurchaseBasket extends JPanel implements ActionListener {
+public class StockBasket extends JPanel implements ActionListener {
 	private JTable table;
 	private Vector rows, columns;
 	private DefaultTableModel tabModel;
@@ -21,10 +21,11 @@ public class PurchaseBasket extends JPanel implements ActionListener {
 	private int quantityDbInt;
 	private int amountInt;
 
-	public PurchaseBasket() {
+	public StockBasket() {
 		rows = new Vector();
 		columns = new Vector();
-		String[] columnNames = { "Amount", "Product name", "Price per item" };
+		String[] columnNames = { "Amount to update", "Product name",
+				"Total in stock after update" };
 		addColumns(columnNames);
 
 		tabModel = new DefaultTableModel();
@@ -36,7 +37,7 @@ public class PurchaseBasket extends JPanel implements ActionListener {
 		scrollPane.setPreferredSize(new java.awt.Dimension(500, 200));
 
 		buttonPanel = new JPanel();
-		addBtn = new JButton("ADD TO BASKET");
+		addBtn = new JButton("ADD TO UPDATE");
 		deleteBtn = new JButton("DELETE");
 		deleteBtn.setEnabled(false);
 
@@ -64,28 +65,25 @@ public class PurchaseBasket extends JPanel implements ActionListener {
 	}
 
 	private void addBtnChecks() {
-		productName = new MyDatabase(2).getName();
-		amountInt = Integer.parseInt(PurchaseItem.getAmount().getValue()
+		productName = new MyDatabase(3).getName();
+		amountInt = Integer.parseInt(UpdateStock.getAmount().getValue()
 				.toString());
-		if (new MyDatabase(2).getQuantity() == null) {
+		if (new MyDatabase(3).getQuantity() == null) {
 			// if the answer from db is null do not parseInt
 		} else {
-			quantityDbInt = Integer.parseInt(new MyDatabase(2).getQuantity());
+			quantityDbInt = Integer.parseInt(new MyDatabase(3).getQuantity());
 		}
 		if (productName == null) {
-			PurchaseItem.getErrorMsg().setText("Enter correct code");
+			UpdateStock.getErrorMsg().setText("Enter correct code");
 
 		} else if (amountInt == 0) {
-			PurchaseItem.getErrorMsg().setText("Please enter correct amount");
+			UpdateStock.getErrorMsg().setText("Please enter correct amount");
 
-		} else if (quantityDbInt < amountInt) {
-			PurchaseItem.getErrorMsg().setText(
-					"Only " + quantityDbInt + " item(s) available.");
 		} else {
 			addRow();
-			PurchaseItem.getAmount().setValue(0);
-			PurchaseItem.getStockNo().setText("");
-			PurchaseItem.getErrorMsg().setText("");
+			UpdateStock.getAmount().setValue(0);
+			UpdateStock.getStockNo().setText("");
+			UpdateStock.getErrorMsg().setText("");
 			deleteBtn.setEnabled(true);
 		}
 	}
@@ -104,13 +102,15 @@ public class PurchaseBasket extends JPanel implements ActionListener {
 
 	private Vector createNewElement() {
 		Vector t = new Vector();
-		spinnerAmount = PurchaseItem.getAmount().getValue().toString();
-		// read from database
-		productName = new MyDatabase(2).getName();
-		String productPrice = new MyDatabase(2).getPrice().toString();
+		spinnerAmount = UpdateStock.getAmount().getValue().toString();
+		int spinnerAmountInt = Integer.parseInt(spinnerAmount);
+		// read product name from database
+		productName = new MyDatabase(3).getName();
+		// itemsInStock - get value from db and add amount added by user
+		int itemsInStock = quantityDbInt + spinnerAmountInt;
 		t.addElement(spinnerAmount);
 		t.addElement(productName);
-		t.addElement(productPrice);
+		t.addElement(itemsInStock);
 		return t;
 	}
 
