@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 
 public class MyDatabase {
 
+	private String code;
 	private String name;
 	private String price;
 	private String quantity;
@@ -48,6 +49,7 @@ public class MyDatabase {
 							.executeQuery("SELECT * FROM Table1 WHERE Key="
 									+ purchaseCode);
 					while (rs.next()) {
+						code = rs.getString("Key");
 						name = rs.getString("ItemName");
 						price = rs.getString("ItemPrice");
 						quantity = rs.getString("ItemQuantity");
@@ -78,6 +80,10 @@ public class MyDatabase {
 		} catch (Exception e) {
 			System.out.println(e.getStackTrace());
 		}
+	}
+	
+	public String getCode() {
+		return code;
 	}
 
 	public String getName() {
