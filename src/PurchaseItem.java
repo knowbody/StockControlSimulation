@@ -1,16 +1,12 @@
 /*
  * Author: Mateusz Zatorski
- * Student ID: 000738254
- *
  */
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DecimalFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -27,21 +23,16 @@ public class PurchaseItem extends JFrame implements ActionListener {
 	private static JTextField errorMsg;
 	private static JSpinner amount;
 	private static JTextField totalPrice;
-	private JButton checkOutBtn;
+	private static JButton checkOutBtn;
 
 	public PurchaseItem() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("Purchase Item");
-		JPanel totalGUI = new JPanel();
 
-		// JPanel with the GridBagLayout.
-		// I also create a GridBagConstraints Object
+		JPanel totalGUI = new JPanel();
 		JPanel mainPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 
-		// For each item I create to add to the mainPanel
-		// I set constraints.
-		// This one is cell (0,0)
 		/** ENTER CODE FIELD AND LABEL AND ERROR FIELD */
 		JPanel panel1 = new JPanel();
 		panel1.add(new JLabel("Enter code: "));
@@ -51,6 +42,7 @@ public class PurchaseItem extends JFrame implements ActionListener {
 		panel1.add(getErrorMsg());
 		getStockNo().setEditable(false);
 		getErrorMsg().setEditable(false);
+		// I set constraints. This one is cell (0,0)
 		c.gridx = 0;
 		c.gridy = 0;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
@@ -87,16 +79,20 @@ public class PurchaseItem extends JFrame implements ActionListener {
 				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 		mainPanel.add(panel5and6, c);
 
-		/** BASKET AREA - ADD and DELETE BUTTONS + SHOPPING LIST */
+		/** BASKET AREA - (ADD and DELETE BUTTONS + SHOPPING LIST) **/
 		JPanel panel5 = new JPanel();
+		// adds Basket which is fully controlled by PurchaseBasket class
 		panel5.add(new PurchaseBasket());
 		c.gridx = 0;
 		c.gridy = 1;
 		panel5and6.add(panel5, c);
 
 		/** TOTAL PRICE FIELD */
+		// total price is calculated by multiplying amount of items in the table
+		// with their price;
+		// calculation happens in totalPrice() method in PurchaseBasket class
 		JPanel panel6 = new JPanel();
-		panel6.add(new JLabel("Total price: "));
+		panel6.add(new JLabel("Total price: £"));
 		setTotalPrice(new JTextField(10));
 		panel6.add(getTotalPrice());
 		getTotalPrice().setEditable(false);
@@ -110,6 +106,7 @@ public class PurchaseItem extends JFrame implements ActionListener {
 		JPanel panel7 = new JPanel();
 		checkOutBtn = new JButton("CHECK OUT");
 		panel7.add(checkOutBtn);
+		checkOutBtn.addActionListener(this);
 		c.gridx = 0;
 		c.gridy = 4;
 		c.anchor = GridBagConstraints.CENTER;
@@ -122,9 +119,15 @@ public class PurchaseItem extends JFrame implements ActionListener {
 		setVisible(true);
 	}
 
+	/* Check Out button makes changes in db */
 	public void actionPerformed(ActionEvent e) {
-
+		if (e.getSource() == checkOutBtn) {
+			PurchaseBasket.updateDatabase();
+			setVisible(false);
+		}
 	}
+
+	/********** SETTERS AND GETTERS **********/
 	public static JTextField getStockNo() {
 		return stockNo;
 	}

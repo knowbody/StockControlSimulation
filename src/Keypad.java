@@ -1,3 +1,6 @@
+/*
+ * Author: Mateusz Zatorski
+ */
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,13 +60,13 @@ public class Keypad extends JPanel implements ActionListener {
 			if (e.getActionCommand().equalsIgnoreCase("Reset")) {
 				PurchaseItem.getStockNo().setText("");
 			} else if (e.getActionCommand().equalsIgnoreCase("Undo")) {
-
 				if (p.equalsIgnoreCase("")) {
 					// if JTextField is empty don't try to delete last digit
 				} else {
 					PurchaseItem.getStockNo().setText(
 							p = p.substring(0, p.length() - 1));
 				}
+
 			} else {
 				PurchaseItem.getStockNo().setText(p + e.getActionCommand());
 			}

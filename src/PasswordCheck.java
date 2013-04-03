@@ -1,3 +1,6 @@
+/*
+ * Author: Mateusz Zatorski
+ */
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -18,13 +21,14 @@ public class PasswordCheck extends JFrame implements ActionListener {
 	private JButton okayBtn;
 
 	public PasswordCheck() {
-
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("User validation");
+		
 		JPanel totalGUI = new JPanel();
 		JPanel mainPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 
+		/** PASSWORD INPUT **/
 		JPanel panel1 = new JPanel();
 		passLbl = new JLabel("Enter password: ");
 		panel1.add(passLbl);
@@ -37,6 +41,7 @@ public class PasswordCheck extends JFrame implements ActionListener {
 		c.gridy = 0;
 		mainPanel.add(panel1, c);
 
+		/** KEYPAD **/
 		JPanel panel2 = new JPanel();
 		panel2.add(new Keypad(4));
 		c.gridy = 1;
@@ -50,29 +55,23 @@ public class PasswordCheck extends JFrame implements ActionListener {
 		setVisible(true);
 	}
 
-	@Override
+	/** VALIDATE PASSWORD **/
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == okayBtn) {
 			char[] enteredPassword = getPass().getPassword();
+			/** PASSWORD STORED IN AN ARRAY **/
 			char[] correctPassword = { '1', '2', '3', '4' };
-
 			if (Arrays.equals(correctPassword, enteredPassword)) {
 				new UpdateStock();
 			} else {
 				JOptionPane.showMessageDialog(null, "Wrong password");
 			}
-			/*
-			 * Best practice says that passwords should be stored in char
-			 * arrays, and then zero-out the array when you're done. This will
-			 * ensure that the password does not stick around in memory. Even if
-			 * the array is garbage collected, the data is still in memory. It
-			 * is not removed until either the computer shuts down or the data
-			 * is overwritten.
-			 */
 			Arrays.fill(enteredPassword, '0');
+			getPass().setText("");
 		}
 	}
 
+	/********** GETTERS AND SETTERS **********/
 	public static JPasswordField getPass() {
 		return pass;
 	}
@@ -80,5 +79,4 @@ public class PasswordCheck extends JFrame implements ActionListener {
 	public static void setPass(JPasswordField pass) {
 		PasswordCheck.pass = pass;
 	}
-
 }

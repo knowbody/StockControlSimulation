@@ -1,3 +1,6 @@
+/*
+ * Author: Mateusz Zatorski
+ */
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,46 +15,47 @@ import javax.swing.table.DefaultTableModel;
 public class PurchaseBasket extends JPanel implements ActionListener {
 	private JTable table;
 	private Vector rows, columns;
-	private DefaultTableModel tabModel;
+	private static DefaultTableModel tabModel;
 	private JScrollPane scrollPane;
 	private JButton addBtn, deleteBtn;
 	private JPanel mainPanel, buttonPanel;
 	private String productCode;
 	private String productName;
 	private String spinnerAmount;
-	private int quantityDbInt;
+	private static int quantityDbInt;
 	private int amountInt;
 
 	public PurchaseBasket() {
 		rows = new Vector();
 		columns = new Vector();
-		String[] columnNames = { "Code", "Amount", "Product name", "Price per item" };
+		String[] columnNames = { "Code", "Amount", "Product name",
+				"Price per item" };
 		addColumns(columnNames);
 
-		// overriding DefaultTableModel, all cells not editable
-		tabModel = new DefaultTableModel() {
+		// overriding DefaultTableModel, to disable editing cells
+		setTabModel(new DefaultTableModel() {
 			@Override
 			public boolean isCellEditable(int row, int column) {
-				// all cells false
-				return false;
+				return false; // all cells false
 			}
-		};
-		tabModel.setDataVector(rows, columns);
+		});
+		getTabModel().setDataVector(rows, columns);
 
-		
-		table = new JTable(tabModel);
-		table.changeSelection(0, 0, false, false);
-		scrollPane = new JScrollPane(table);// ScrollPane
-		
+		/** SETTING TABLE PROPERTIES **/
+		table = new JTable(getTabModel());
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		table.getColumnModel().getColumn(0).setPreferredWidth(30);
+		table.getColumnModel().getColumn(1).setPreferredWidth(50);
+		table.getColumnModel().getColumn(2).setPreferredWidth(240);
+		scrollPane = new JScrollPane(table);
 
+		/** ADD and DELETE buttons **/
 		buttonPanel = new JPanel();
 		addBtn = new JButton("ADD TO BASKET");
 		deleteBtn = new JButton("DELETE");
 		deleteBtn.setEnabled(false);
-
 		buttonPanel.add(addBtn);
 		buttonPanel.add(deleteBtn);
-
 		addBtn.addActionListener(this);
 		deleteBtn.addActionListener(this);
 
@@ -60,12 +64,14 @@ public class PurchaseBasket extends JPanel implements ActionListener {
 		mainPanel.add("Center", scrollPane);
 		mainPanel.add("North", buttonPanel);
 		add(mainPanel);
+
 		setVisible(true);
 	}
 
+	/** adds/deletes items to/from table, calls totalPrice() method **/
 	public void actionPerformed(ActionEvent source) {
 		if (source.getSource() == (JButton) addBtn) {
-			addBtnChecks();
+			validateInput();
 			totalPrice();
 		} else if (source.getSource() == (JButton) deleteBtn) {
 			deleteRow(table.getSelectedRow());
@@ -73,28 +79,33 @@ public class PurchaseBasket extends JPanel implements ActionListener {
 		}
 	}
 
-	private void addBtnChecks() {
-		validateInput();
-	}
-
-	/**
-	 * validating user's input: (a) if product code is correct (b) if purchased
-	 * amount is <= than quantity in db (c) if the amount was entered (d) if
-	 * everything okay it calls checkForDuplicates() method
-	 **/
+	/** validates user's input; calls checkForDuplicates() method **/
 	private void validateInput() {
-		productName = new MyDatabase(2).getName();
+		productName = new MyDatabase(2, "search").getName();
 		amountInt = Integer.parseInt(PurchaseItem.getAmount().getValue()
 				.toString());
-		if (new MyDatabase(2).getQuantity() == null) {
+		if (new MyDatabase(2, "search").getQuantity() == null) {
 			// if the answer from db is null do not parseInt
 		} else {
-			quantityDbInt = Integer.parseInt(new MyDatabase(2).getQuantity());
+			quantityDbInt = Integer.parseInt(new MyDatabase(2, "search")
+					.getQuantity());
 		}
+
+		// checks if the entered code exists in db
 		if (productName == null) {
 			PurchaseItem.getErrorMsg().setText("Enter correct code");
+
+			// checks if the user chose the amount
 		} else if (amountInt == 0) {
 			PurchaseItem.getErrorMsg().setText("Please enter correct amount");
+
+			// checks if the amount of product is available in db
+		} else if (quantityDbInt < amountInt) {
+			PurchaseItem.getErrorMsg().setText(
+					"Only " + quantityDbInt + " item(s) available.");
+
+			// calls checkForDuplicates() method, makes amount value 0,
+			// and 'code' field empty, enables delete button
 		} else {
 			checkForDuplicates();
 			PurchaseItem.getAmount().setValue(0);
@@ -103,49 +114,74 @@ public class PurchaseBasket extends JPanel implements ActionListener {
 		}
 	}
 
-	/** checks for duplicate products in JTable **/
+	/** CHECKS FOR DUPLICATE PRODUCTS IN JTable **/
 	private void checkForDuplicates() {
-		boolean updated = false;
-		for (int i = 0; i < tabModel.getRowCount(); i++)
-			// when item already on the list update the amount on the list
-			if (tabModel.getValueAt(i, 1).equals(productName.toString())) {
-				int currentAmount = Integer.parseInt((String) tabModel
-						.getValueAt(i, 0));
+		boolean duplicate = false;
+		for (int i = 0; i < getTabModel().getRowCount(); i++)
+			// when item already on the list update the amount
+			if (getTabModel().getValueAt(i, 0).equals(
+					PurchaseItem.getStockNo().getText())) {
+				int currentAmount = Integer.parseInt((String) getTabModel()
+						.getValueAt(i, 1));
 				int newAmount = currentAmount + amountInt;
-				// check if the amount of items in stock < purchased items
+				// checks if the amount of items in stock < purchased items
 				if (quantityDbInt < newAmount) {
 					PurchaseItem.getErrorMsg().setText(
 							"Only " + quantityDbInt + " item(s) available.");
-					updated = true;
+					duplicate = true;
 					break;
 				}
-				tabModel.setValueAt(Integer.toString(newAmount), i, 0);
-				updated = true;
+				// updates amount value in the table
+				getTabModel().setValueAt(Integer.toString(newAmount), i, 1);
+				duplicate = true;
 				PurchaseItem.getErrorMsg().setText("");
 				break;
 			}
 
-		// if item doesn't exist on the list add it to the list
-		if (!updated) {
+		// if item is not duplicated add it to the list
+		if (!duplicate) {
 			addRow();
 			PurchaseItem.getErrorMsg().setText("");
 		}
 	}
 
-	/** calculates totalPrice **/
+	/** CALCULATES TOTAL PRICE **/
 	private void totalPrice() {
 		double totalPrice = 0;
-		// nothing in the table then totalPrice empty
-		if (tabModel.getRowCount() == 0) {
+		// nothing in the table then totalPrice field is empty
+		if (getTabModel().getRowCount() == 0) {
 			PurchaseItem.getTotalPrice().setText("");
 		} else {
 			// not empty then calculate totalPrice of all items in the table
-			for (int i = 0; i < tabModel.getRowCount(); i++) {
-				totalPrice += Double.parseDouble((String) tabModel.getValueAt(
-						i, 1))
-						* Double.parseDouble((String) tabModel.getValueAt(i, 3));
+			for (int i = 0; i < getTabModel().getRowCount(); i++) {
+				totalPrice += Double.parseDouble((String) getTabModel()
+						.getValueAt(i, 1))
+						* Double.parseDouble((String) getTabModel().getValueAt(
+								i, 3));
 				PurchaseItem.getTotalPrice().setText("" + totalPrice);
 			}
+		}
+	}
+	
+	/** UPDATES DB AFTER PURCHASING ALL OF THE ITEMS **/
+	public static void updateDatabase() {
+		for (int i = 0; i < getTabModel().getRowCount(); i++) {
+			// use 'Code' column to say which record in db will be updated
+			MyDatabase.setKey(getTabModel().getValueAt(i, 0).toString());
+			// get the amount of particular product from db
+			MyDatabase.findDbAmount();
+			int dbAmountInt = Integer.parseInt(MyDatabase.getDbAmount());
+
+			String purchasedAmountStr = getTabModel().getValueAt(i, 1)
+					.toString();
+			int purchasedAmount = Integer.parseInt(purchasedAmountStr);
+			// calculates final amount after purchasing
+			int valueToUpdate = dbAmountInt - purchasedAmount;
+
+			// use valueToUpdate to update values in db
+			MyDatabase.setUpdatedAmount("" + valueToUpdate);
+
+			new MyDatabase(3, "update");
 		}
 	}
 
@@ -157,17 +193,16 @@ public class PurchaseBasket extends JPanel implements ActionListener {
 	private void addRow() {
 		Vector r = new Vector();
 		r = createNewElement();
-		rows.addElement(r);
-		table.addNotify();
+		getTabModel().addRow(r);
 	}
 
 	private Vector createNewElement() {
 		Vector t = new Vector();
 		spinnerAmount = PurchaseItem.getAmount().getValue().toString();
 		// read from database
-		productName = new MyDatabase(2).getName();
-		productCode = new MyDatabase(2).getCode();
-		String productPrice = new MyDatabase(2).getPrice().toString();
+		productName = new MyDatabase(2, "search").getName();
+		productCode = new MyDatabase(2, "search").getCode();
+		String productPrice = new MyDatabase(2, "search").getPrice().toString();
 		t.addElement(productCode);
 		t.addElement(spinnerAmount);
 		t.addElement(productName);
@@ -176,17 +211,24 @@ public class PurchaseBasket extends JPanel implements ActionListener {
 	}
 
 	private void deleteRow(int index) {
-		// makes the first row always selected
 		table.changeSelection(0, 0, false, false);
-		int size = tabModel.getRowCount();
+		int size = getTabModel().getRowCount();
 		// can't delete when no items
-		if (size == 1) {
+		if (size == 0) {
 			deleteBtn.setEnabled(false);
 		}
 		// at least one row in table
 		if (index != -1) {
-			rows.removeElementAt(index);
-			table.addNotify();
+			getTabModel().removeRow(index);
 		}
+	}
+
+	/********** GETTERS AND SETTERS **********/
+	public static DefaultTableModel getTabModel() {
+		return tabModel;
+	}
+
+	public static void setTabModel(DefaultTableModel tabModel) {
+		PurchaseBasket.tabModel = tabModel;
 	}
 }

@@ -1,17 +1,12 @@
 /*
  * Author: Mateusz Zatorski
- * Student ID: 000738254
- *
  */
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DecimalFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -32,17 +27,12 @@ public class UpdateStock extends JFrame implements ActionListener {
 
 	public UpdateStock() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setTitle("Update Stock");
+		setTitle("Update Stock");		
+		
 		JPanel totalGUI = new JPanel();
-
-		// JPanel with the GridBagLayout.
-		// I also create a GridBagConstraints Object
 		JPanel mainPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-
-		// For each item I create to add to the mainPanel
-		// I set constraints.
-		// This one is cell (0,0)
+		
 		/** ENTER CODE FIELD AND LABEL AND ERROR FIELD */
 		JPanel panel1 = new JPanel();
 		panel1.add(new JLabel("Enter code: "));
@@ -52,6 +42,7 @@ public class UpdateStock extends JFrame implements ActionListener {
 		panel1.add(getErrorMsg());
 		getStockNo().setEditable(false);
 		getErrorMsg().setEditable(false);
+		// I set constraints. This one is cell (0,0)
 		c.gridx = 0;
 		c.gridy = 0;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
@@ -90,6 +81,7 @@ public class UpdateStock extends JFrame implements ActionListener {
 
 		/** ITEMS TO UPDATE AREA - ADD and DELETE BUTTONS + ITEM LIST */
 		JPanel panel5 = new JPanel();
+		// adds Update area which is fully controlled by StockBasket class
 		panel5.add(new StockBasket());
 		c.gridx = 0;
 		c.gridy = 1;
@@ -99,25 +91,26 @@ public class UpdateStock extends JFrame implements ActionListener {
 		JPanel panel7 = new JPanel();
 		updateBtn = new JButton("UPDATE STOCK");
 		panel7.add(updateBtn);
+		updateBtn.addActionListener(this);
 		c.gridx = 0;
 		c.gridy = 4;
 		c.anchor = GridBagConstraints.CENTER;
 		mainPanel.add(panel7, c);
-
+		
 		totalGUI.add(mainPanel);
-
 		setContentPane(totalGUI);
 		pack();
 		setVisible(true);
 	}
-	
-	@Override
+
+	/* Update button makes changes in db */
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+		if (e.getSource() == updateBtn) {
+			StockBasket.updateDatabase();
+		}
 	}
 
-	
+	/********** GETTERS AND SETTERS **********/
 	public static JTextField getStockNo() {
 		return stockNo;
 	}
@@ -149,5 +142,4 @@ public class UpdateStock extends JFrame implements ActionListener {
 	public static void setTotalPrice(JTextField totalPrice) {
 		UpdateStock.totalPrice = totalPrice;
 	}
-	
 }

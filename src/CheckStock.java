@@ -1,13 +1,8 @@
 /*
  * Author: Mateusz Zatorski
- * Student ID: 000738254
- *
  */
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
@@ -16,7 +11,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -68,24 +62,23 @@ public class CheckStock extends JFrame implements ActionListener {
 		setVisible(true);
 	}
 
-	// takes whatever user input in stock number field
-	// and also takes the name of the product from MS Access database
-	// to output information about the product: name, price, stock no.
-	// or if it exists at all
-	@Override
+	// user inputs Product Code value; gives details, about the product,
+	// validates input
 	public void actionPerformed(ActionEvent e) {
-		String key = getStockNo().getText();
-		String name = (new MyDatabase(1).getName());
+		String name = (new MyDatabase(1, "search").getName());
 		if (name == null) {
 			information.setText("No such item in stock");
 		} else {
 			information.setText(name);
-			information.append("\nPrice: £" + (new MyDatabase(1).getPrice()));
+			information.append("\nPrice: £"
+					+ (new MyDatabase(1, "search").getPrice()));
 			information.append("\nAmount in stock: "
-					+ (new MyDatabase(1).getQuantity()));
+					+ (new MyDatabase(1, "search").getQuantity()));
+			getStockNo().setText("");
 		}
 	}
 
+	/** SETTERS AND GETTERS **/
 	public static JTextField getStockNo() {
 		return stockNo;
 	}
@@ -93,7 +86,7 @@ public class CheckStock extends JFrame implements ActionListener {
 	public void setStockNo(JTextField stockNo) {
 		this.stockNo = stockNo;
 	}
-	
+
 	public static JTextArea getInformation() {
 		return information;
 	}

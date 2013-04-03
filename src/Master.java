@@ -1,53 +1,60 @@
 /*
  * Author: Mateusz Zatorski
- * Student ID: 000738254
- *
  */
-import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class Master extends JFrame implements ActionListener {
 
 	private JButton check;
 	private JButton purchase;
 	private JButton stock;
-	private JButton quit;
 
 	public static void main(String[] args) {
 		Master jf = new Master();
 	}
 
 	public Master() {
-		setLayout(new FlowLayout());
-		setBounds(500, 300, 415, 110);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Master");
-		// close application only by clicking the quit button
-//		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-		add(new JLabel("Select an option by clicking one of the buttons below"));
+		JPanel totalGUI = new JPanel();
+		JPanel mainPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
 
+		JPanel panel1 = new JPanel();
+		panel1.add(new JLabel(
+				"Select an option by clicking one of the buttons below"));
+		c.gridy = 0;
+		mainPanel.add(panel1, c);
+
+		JPanel panel2 = new JPanel();
 		check = new JButton("Check Stock");
-		add(check);
+		panel2.add(check);
 		check.addActionListener(this);
 
 		purchase = new JButton("Purchase Item");
-		add(purchase);
+		panel2.add(purchase);
 		purchase.addActionListener(this);
 
 		stock = new JButton("Update Stock");
-		add(stock);
+		panel2.add(stock);
 		stock.addActionListener(this);
+		c.gridy = 1;
+		mainPanel.add(panel2, c);
 
-//		quit = new JButton("Exit");
-//		add(quit);
-//		quit.addActionListener(this);
+		totalGUI.add(mainPanel);
 
-		setResizable(false);
+		setLocationRelativeTo(null);
+		setContentPane(totalGUI);
+		pack();
 		setVisible(true);
 	}
 
@@ -58,10 +65,7 @@ public class Master extends JFrame implements ActionListener {
 		} else if (e.getSource() == purchase) {
 			new PurchaseItem();
 		} else if (e.getSource() == stock) {
-			new UpdateStock();
-		} else if (e.getSource() == quit) {
-//			StockData.close();
-			System.exit(0);
+			new PasswordCheck();
 		}
 	}
 }
